@@ -11,11 +11,25 @@ import { PropertyTypesModule } from './modules/property-types/property-types.mod
 import { PropertyType } from './modules/property-types/entities/property-type.entity';
 import { Property } from './modules/properties/entities/property.entity';
 import { Address } from './modules/address/entities/address.entity';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { DetailsModule } from './modules/details/details.module';
+import { Detail } from './modules/details/entities/detail.entity';
+import { RentalContractsModule } from './modules/rental-contracts/rental-contracts.module';
+import { SalesContractsModule } from './modules/sales-contracts/sales-contracts.module';
+import { SalesContract } from './modules/sales-contracts/entities/sales-contract.entity';
+import { RentalContract } from './modules/rental-contracts/entities/rental-contract.entity';
+import { State } from './modules/address/entities/state.entity';
+import { City } from './modules/address/entities/city.entity';
+import { District } from './modules/address/entities/district.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', ''),
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -28,14 +42,23 @@ import { Address } from './modules/address/entities/address.entity';
         Address,
         User,
         PropertyType,
-        Property
+        Property,
+        Detail,
+        SalesContract,
+        RentalContract,
+        State,
+        City,
+        District
       ],
       synchronize: true,
     }),
     AuthModule,
     UsersModule,
     PropertiesModule,
-    PropertyTypesModule
+    PropertyTypesModule,
+    DetailsModule,
+    RentalContractsModule,
+    SalesContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,8 @@
 import { Property } from "src/modules/properties/entities/property.entity";
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { City } from "./city.entity";
+import { District } from "./district.entity";
+import { State } from "./state.entity";
 
 type Location = {
     lat: number;
@@ -14,17 +17,20 @@ export class Address {
     @Column({ nullable: true })
     nation: string;
 
-    @Column({ nullable: true })
-    state: string;
+    @ManyToOne(() => State, state => state.addresses, {eager: true, nullable: false})
+    state: State;
 
-    @Column({ nullable: true })
-    city: string;
+    @ManyToOne(() => City, city => city.addresses, {eager: true, nullable: false})
+    city: City;
 
-    @Column({ nullable: true })
-    district: string;
+    @ManyToOne(() => District, district => district.addresses, {eager: true})
+    district: District;
 
     @Column({ nullable: true })
     route: string;
+
+    @Column({ nullable: true })
+    complement: string;
 
     @Column({ nullable: true })
     number: number;

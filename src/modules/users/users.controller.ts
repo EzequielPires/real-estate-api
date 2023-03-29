@@ -22,6 +22,17 @@ export class UsersController {
   findAll(@Query() query: FindUserDto) {
     return this.usersService.findAll({...query, role: Role.customer});
   }
+  
+  //Owner
+  @Post('owners')
+  createOwner(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create({...createUserDto, role: Role.owner});
+  }
+
+  @Get('owners')
+  findAllOwner(@Query() query: FindUserDto) {
+    return this.usersService.findAll({...query, role: Role.owner});
+  }
 
   //Realtors
   @UseGuards(JwtAuthGuard, UserAdminGuard)
