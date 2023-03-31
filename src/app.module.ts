@@ -22,6 +22,7 @@ import { RentalContract } from './modules/rental-contracts/entities/rental-contr
 import { State } from './modules/address/entities/state.entity';
 import { City } from './modules/address/entities/city.entity';
 import { District } from './modules/address/entities/district.entity';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { District } from './modules/address/entities/district.entity';
     DetailsModule,
     RentalContractsModule,
     SalesContractsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
