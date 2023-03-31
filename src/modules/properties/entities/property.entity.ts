@@ -63,7 +63,7 @@ export class Property {
     @Column()
     totalArea: number;
 
-    @Column({type: "json"})
+    @Column({type: "simple-array"})
     images: Array<string>
 
     @ManyToOne(() => PropertyType, propertyType => propertyType.properties, {eager: true, nullable: false})
