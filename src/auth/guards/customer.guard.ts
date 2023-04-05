@@ -3,12 +3,12 @@ import { Observable } from "rxjs";
 import { Role } from "src/enums/role.enum";
 
 @Injectable()
-export class UserAdminGuard implements CanActivate {
+export class CustomerGuard implements CanActivate {
     canActivate(
         context: ExecutionContext,
       ): boolean | Promise<boolean> | Observable<boolean> {
         const {user} = context.switchToHttp().getRequest();
-        console.log(user.role);
-        return user.role === Role.super_admin || user.role === Role.admin;
+        
+        return user.role === Role.customer;
       }
 }

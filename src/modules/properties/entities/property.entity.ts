@@ -1,11 +1,12 @@
 import { AdType, Status } from "src/enums/property.enum";
 import { Address } from "src/modules/address/entities/address.entity";
 import { Detail } from "src/modules/details/entities/detail.entity";
+import { Invoice } from "src/modules/invoices/entities/invoice.entity";
 import { PropertyType } from "src/modules/property-types/entities/property-type.entity";
 import { RentalContract } from "src/modules/rental-contracts/entities/rental-contract.entity";
 import { SalesContract } from "src/modules/sales-contracts/entities/sales-contract.entity";
 import { User } from "src/modules/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export interface IDetail {
     id: number;
@@ -81,6 +82,9 @@ export class Property {
     
     @ManyToOne(() => User, user => user.favoriteProperties)
     favorites: User;
+    
+    @OneToMany(() => Invoice, invoice => invoice.property)
+    invoices: Invoice[];
 
     @CreateDateColumn()
     createdAt: Date;

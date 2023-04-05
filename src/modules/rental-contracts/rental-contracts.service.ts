@@ -6,12 +6,15 @@ import { UsersService } from '../users/users.service';
 import { CreateRentalContractDto } from './dto/create-rental-contract.dto';
 import { UpdateRentalContractDto } from './dto/update-rental-contract.dto';
 import { RentalContract } from './entities/rental-contract.entity';
+import { PropertiesService } from '../properties/properties.service';
+import { Status } from 'src/enums/property.enum';
 
 @Injectable()
 export class RentalContractsService {
   constructor(
     @InjectRepository(RentalContract) private rentalContractRepository: Repository<RentalContract>,
-    private userService: UsersService
+    private userService: UsersService,
+    private propertiesService: PropertiesService
   ) { }
 
   async create(createRentalContractDto: CreateRentalContractDto) {
@@ -35,6 +38,8 @@ export class RentalContractsService {
         ...createRentalContractDto,
         price: price.replace(/[^0-9]/g, '')
       });
+
+      await this.propertiesService.update(property.id, {status: Status.vendido});
 
       return {
         success: true,

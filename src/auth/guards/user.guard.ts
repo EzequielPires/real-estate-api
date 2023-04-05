@@ -10,6 +10,8 @@ export class UserGuard implements CanActivate {
         const {id} = context.switchToHttp().getRequest().params;
         const {user} = context.switchToHttp().getRequest();
 
+        console.log(user, id);
+
         if(user.role === Role.super_admin) return true;
         
         return user.id === id;

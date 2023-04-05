@@ -11,6 +11,7 @@ import { CreatePropertyDto } from './dto/create-property.dto';
 import { FindPropertyDto } from './dto/find-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { Property } from './entities/property.entity';
+import { Status } from 'src/enums/property.enum';
 
 @Injectable()
 export class PropertiesService {
@@ -296,6 +297,26 @@ export class PropertiesService {
         message: 'Imagem removida com sucesso.',
         images: property.images.filter(item => item != path)
       }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+
+  async updateStatus(id: number, status: Status) {
+    try {
+      const property = await this.propertyRepository.findOne({where: {id}});
+
+      if(!property) throw new Error('Propriedade não encontrada');
+
+      await this.propertyRepository.update(id, {status});
+
+      return {
+        success: true,
+        message: 'Status alterado com sucesso.'
+      }      
     } catch (error) {
       return {
         success: false,

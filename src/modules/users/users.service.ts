@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { FindUserDto } from './dto/find-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { hashSync } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -87,7 +88,15 @@ export class UsersService {
 
   async findOne(id: string) {
     try {
-      const user = await this.userRepository.findOneBy({ id });
+      const user = await this.userRepository.findOne({ where: {id}, relations: [
+        'rentalContracts', 
+        'salesContracts', 
+        'favoriteProperties', 
+        'rentalContractsLocator',
+        'rentalContractsTenant',
+        'salesContractsBuyer',
+        'salesContractsBuyer.property.address'
+      ] });
 
       if (!user) throw new Error('Usuário não encontrado.');
 
@@ -122,10 +131,16 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    const {password} = updateUserDto;
     try {
       const user = await this.userRepository.findOneBy({ id });
 
       if (!user) throw new Error('Usuário não encontrado.');
+
+      if(password) {
+        const newPassword = hashSync(password, 10);
+        await this.userRepository.update(id, {...updateUserDto, password: newPassword});
+      }
 
       await this.userRepository.update(id, updateUserDto);
 
@@ -152,6 +167,29 @@ export class UsersService {
       return {
         success: true,
         user: 'Usuário removido com sucesso.'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+  
+  async uploadImage(id: string, path: string) {
+    try {
+      const property = await this.userRepository.findOne({ where: { id } });
+
+      if (!property) throw new Error('Propriedade não encontrada.');
+
+      property.avatar = path;
+
+      await this.userRepository.update(id, property);
+
+      return {
+        success: true,
+        path: property.avatar,
+        message: 'Avatar atualizada com sucesso.'
       }
     } catch (error) {
       return {

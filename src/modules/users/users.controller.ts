@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,6 +7,10 @@ import { UserGuard } from 'src/auth/guards/user.guard';
 import { Role } from 'src/enums/role.enum';
 import { FindUserDto } from './dto/find-user.dto';
 import { UserAdminGuard } from 'src/auth/guards/user-admin.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { editFileName } from 'src/helpers/string';
+import { compressImage } from 'src/helpers/compress';
 
 @Controller('users')
 export class UsersController {
@@ -91,5 +95,17 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './storage/temp',
+      filename: editFileName
+    })
+  }))
+  @Post('upload/avatar/:id')
+  async uploadImage(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
+    const path = await compressImage(file);
+    return await this.usersService.uploadImage(id, path)
   }
 }

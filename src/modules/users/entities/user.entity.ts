@@ -55,10 +55,10 @@ export class User {
     @OneToMany(() => SalesContract, salesContract => salesContract.owner)
     salesContracts: SalesContract[]; 
     
-    @OneToMany(() => SalesContract, salesContract => salesContract.owner)
+    @OneToMany(() => SalesContract, salesContract => salesContract.buyer)
     salesContractsBuyer: SalesContract[]; 
     
-    @OneToMany(() => SalesContract, salesContract => salesContract.owner)
+    @OneToMany(() => SalesContract, salesContract => salesContract.seller)
     salesContractsSeller: SalesContract[]; 
 
     //End Contracts

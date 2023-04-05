@@ -1,4 +1,4 @@
-import { AdType } from "src/enums/property.enum";
+import { AdType, Status } from "src/enums/property.enum";
 import { Address } from "src/modules/address/entities/address.entity";
 import { Detail } from "src/modules/details/entities/detail.entity";
 import { PropertyType } from "src/modules/property-types/entities/property-type.entity";
@@ -7,6 +7,7 @@ import { IDetail } from "../entities/property.entity";
 
 export class CreatePropertyDto {
     id?: number;
+    status: Status;
     adType: AdType;
     numberRooms: number;
     numberBathroom: number;

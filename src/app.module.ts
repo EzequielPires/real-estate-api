@@ -23,6 +23,8 @@ import { State } from './modules/address/entities/state.entity';
 import { City } from './modules/address/entities/city.entity';
 import { District } from './modules/address/entities/district.entity';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { InvoicesModule } from './modules/invoices/invoices.module';
+import { Invoice } from './modules/invoices/entities/invoice.entity';
 
 @Module({
   imports: [
@@ -50,6 +52,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
         State,
         User,
         Property,
+        Invoice
       ],
       synchronize: true,
     }),
@@ -61,6 +64,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
     RentalContractsModule,
     SalesContractsModule,
     PaymentsModule,
+    InvoicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

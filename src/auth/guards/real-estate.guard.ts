@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Observable } from "rxjs";
+import { Role } from "src/enums/role.enum";
 
 @Injectable()
 export class RealEstateGuard implements CanActivate {
@@ -7,6 +8,6 @@ export class RealEstateGuard implements CanActivate {
         context: ExecutionContext,
       ): boolean | Promise<boolean> | Observable<boolean> {
         const {user} = context.switchToHttp().getRequest();
-        return user.isRealEstate;
+        return user.role === Role.super_admin || user.role === Role.admin || user.role === Role.admin || user.role === Role.realtor;
       }
 }
