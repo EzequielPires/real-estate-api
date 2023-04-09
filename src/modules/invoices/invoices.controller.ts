@@ -26,8 +26,8 @@ export class InvoicesController {
     fileFilter: pdfFileFilter,
   }))
   @Post(':id/upload')
-  async uploadPdf(@UploadedFile() pdfFile: Express.Multer.File) {
-    return pdfFile;
+  async uploadPdf(@UploadedFile() pdfFile: Express.Multer.File, @Param('id') id: string) {
+    return this.invoicesService.update(id, {path: pdfFile.path});
   }
 
   @Get()
@@ -37,12 +37,12 @@ export class InvoicesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.invoicesService.findOne(+id);
+    return this.invoicesService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateInvoiceDto: UpdateInvoiceDto) {
-    return this.invoicesService.update(+id, updateInvoiceDto);
+    return this.invoicesService.update(id, updateInvoiceDto);
   }
 
   @Delete(':id')

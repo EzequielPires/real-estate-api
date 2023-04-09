@@ -13,6 +13,9 @@ export class Invoice {
 
     @Column({ type: 'date', nullable: true })
     expiration: Date;
+   
+    @Column({ type: 'date', nullable: true })
+    payment: Date;
     
     @Column({ type: 'date', nullable: true })
     reference: Date;

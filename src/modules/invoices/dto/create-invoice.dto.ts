@@ -6,6 +6,7 @@ export class CreateInvoiceDto {
     id?: string;
     status?: Status;
     expiration?: Date;
+    payment?: Date;
     reference?: Date;
     price?: string;
     path?: string;

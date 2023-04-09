@@ -55,7 +55,7 @@ export class InvoicesService {
 
   async findAll(queryDto: FindInvoiceDto) {
     try {
-      const {end, limit, locatorId, page, rentalContractId, start, tenantId} = queryDto;
+      const { end, limit, locatorId, page, rentalContractId, start, tenantId } = queryDto;
 
       const query = this.invoiceRepository.createQueryBuilder('invoice')
         .leftJoinAndSelect('invoice.rentalContract', 'rentalContract')
@@ -70,11 +70,11 @@ export class InvoicesService {
         .take(limit ?? 15)
         .orderBy("invoice.createdAt", 'DESC');
 
-        {rentalContractId && query.andWhere('rentalContract.id = :rentalContractId', {rentalContractId})}
-        {tenantId && query.andWhere('tenant.id = :tenantId', {tenantId})}
-        {locatorId && query.andWhere('locator.id = :locatorId', {locatorId})}
+      { rentalContractId && query.andWhere('rentalContract.id = :rentalContractId', { rentalContractId }) }
+      { tenantId && query.andWhere('tenant.id = :tenantId', { tenantId }) }
+      { locatorId && query.andWhere('locator.id = :locatorId', { locatorId }) }
 
-        const [results, count] = await query.getManyAndCount();
+      const [results, count] = await query.getManyAndCount();
 
       return {
         success: true,
@@ -91,18 +91,65 @@ export class InvoicesService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} invoice`;
+  async findOne(id: string) {
+    try {
+      const invoice = await this.invoiceRepository.findOne({
+        where: { id },
+        relations: [
+          'rentalContract',
+          'rentalContract.tenant',
+          'rentalContract.property',
+          'rentalContract.property.address',
+          'rentalContract.property.address.city',
+          'rentalContract.property.address.district',
+        ]
+      });
+      if (!invoice) throw new Error('Fatura não encontrada.');
+
+      return {
+        success: true,
+        invoice
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 
-  update(id: number, updateInvoiceDto: UpdateInvoiceDto) {
-    return `This action updates a #${id} invoice`;
+  async update(id: string, { expiration, price, reference, status, path, payment }: UpdateInvoiceDto) {
+    try {
+      const invoice = await this.invoiceRepository.findOne({
+        where: { id },
+      });
+      if (!invoice) throw new Error('Fatura não encontrada.');
+
+      await this.invoiceRepository.update(id, {
+        expiration: expiration ?? invoice.expiration, 
+        price: price ? price.replace(/[^0-9]/g, '') : invoice.price, 
+        reference: reference ?? invoice.reference, 
+        status: status ?? invoice.status,
+        path: path ?? invoice.path,
+        payment: payment ?? invoice.payment,
+      });
+
+      return {
+        success: true,
+        invoice: await this.findOne(id).then(res => res.invoice)
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 
   async remove(id: string) {
     try {
-      const invoice = await this.invoiceRepository.findOne({where: {id}});
-      if(!invoice)  throw new Error('Fatura não encontrada.');
+      const invoice = await this.invoiceRepository.findOne({ where: { id } });
+      if (!invoice) throw new Error('Fatura não encontrada.');
 
       await this.invoiceRepository.delete(id);
 
