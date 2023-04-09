@@ -82,9 +82,6 @@ export class Property {
     
     @ManyToOne(() => User, user => user.favoriteProperties)
     favorites: User;
-    
-    @OneToMany(() => Invoice, invoice => invoice.property)
-    invoices: Invoice[];
 
     @CreateDateColumn()
     createdAt: Date;

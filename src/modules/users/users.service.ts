@@ -94,6 +94,8 @@ export class UsersService {
         'favoriteProperties', 
         'rentalContractsLocator',
         'rentalContractsTenant',
+        'rentalContractsTenant.property.address',
+        'rentalContractsTenant.invoices',
         'salesContractsBuyer',
         'salesContractsBuyer.property.address'
       ] });

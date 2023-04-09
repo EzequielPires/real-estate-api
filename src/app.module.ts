@@ -25,6 +25,8 @@ import { District } from './modules/address/entities/district.entity';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
 import { Invoice } from './modules/invoices/entities/invoice.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { PdfInterceptor } from './interceptors/pdf.interceptor';
 
 @Module({
   imports: [
@@ -67,6 +69,8 @@ import { Invoice } from './modules/invoices/entities/invoice.entity';
     InvoicesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+  ],
 })
 export class AppModule { }

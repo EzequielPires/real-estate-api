@@ -13,34 +13,86 @@ export class PaymentsService {
       apiVersion: '2022-11-15'
     });
   }
-  /* async create(createPaymentDto: CreatePaymentDto) {
-   try {
-     const clientAlreadyExists = await this.stripe.customers.list({
-       email: 'maria@gmail.com'
-     });
-     if (!(clientAlreadyExists.data.length > 0)) throw new Error('Cliente inválido.');
-
-     const paymentIntent = await this.stripe.invoices.create({
-       amount: 98500,
-       currency: 'brl',
-       customer: clientAlreadyExists.data[0].id,
-       payment_method_types: ['boleto'],
-       description: 'Pagamento do aluguel',
-     });
-
-     return {
-       success: true,
-       payment: paymentIntent
-     }
-   } catch (error) {
-     return {
-       success: false,
-       message: error.message
-     }
-   }
- }  */
-
   async create(createPaymentDto: CreatePaymentDto) {
+    try {
+      const session = await this.stripe.checkout.sessions.create({
+        payment_method_types: ['boleto'],
+        // The parameter is optional. The default value of expires_after_days is 3.
+        payment_method_options: {
+          boleto: {
+            expires_after_days: 7
+          }
+        },
+        line_items: [{
+          price_data: {
+            // To accept `boleto`, all line items must have currency: brl
+            currency: 'brl',
+            product_data: {
+              name: 'T-shirt',
+            },
+            unit_amount: 2000,
+          },
+          quantity: 1,
+        }],
+        mode: 'payment',
+        success_url: 'https://example.com/success',
+        cancel_url: 'https://example.com/cancel',
+      });
+
+      const paymentIntent = await this.stripe.paymentIntents.create({
+        amount: 800,
+        currency: 'brl',
+        description: 'T-shirt',
+        payment_method_types: ['boleto'],
+      });
+
+      const source = await this.stripe.paymentMethods.create({
+        type: 'boleto',
+        boleto: {
+          tax_id: "70867831103"
+        },
+        billing_details: {
+          email: 'yasmin0143332@gmail.com',
+          name: 'Yasmim Lopes',
+          phone: '64996268117',
+          address: {
+            city: 'Catalão',
+            country: 'BR',
+            line1: 'Rua José da Rosa Pena',
+            line2: 'Ipanema',
+            postal_code: '75705020',
+            state: 'GO'
+          }
+        }
+      });
+
+      
+      await this.stripe.paymentIntents.update(paymentIntent.id, {
+        payment_method: source.id,
+      });
+      
+      await this.stripe.paymentIntents.confirm(paymentIntent.id);
+      
+      const paymentIntentWithBoleto = await this.stripe.paymentIntents.retrieve(
+        paymentIntent.id,
+        { expand: ['payment_method'] },
+      );
+
+      return {
+        success: true,
+        paymentIntentWithBoleto: paymentIntentWithBoleto,
+        payment_intent: paymentIntent,
+        source: source,
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+
+  /* async create(createPaymentDto: CreatePaymentDto) {
     try {
       const pagseguro = new PagSeguro({
         email: 'ezequiel.pires082000@gmail.com',
@@ -73,7 +125,7 @@ export class PaymentsService {
       }
     }
   }
-
+ */
   findAll() {
     return `This action returns all payments`;
   }

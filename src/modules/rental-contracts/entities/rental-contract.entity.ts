@@ -1,6 +1,7 @@
+import { Invoice } from "src/modules/invoices/entities/invoice.entity";
 import { Property } from "src/modules/properties/entities/property.entity";
 import { User } from "src/modules/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class RentalContract {
@@ -34,6 +35,9 @@ export class RentalContract {
 
     @ManyToOne(() => User, user => user.rentalContractsTenant, {eager: true, nullable: false})
     tenant: User;
+
+    @OneToMany(() => Invoice, invoice => invoice.rentalContract)
+    invoices: Invoice[];
 
     @CreateDateColumn()
     createdAt: Date;

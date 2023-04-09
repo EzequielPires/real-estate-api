@@ -19,3 +19,10 @@ export const imageFileFilter = (req: Request, file: Express.Multer.File, callbac
     }
     callback(null, true);
 };
+
+export const pdfFileFilter = (req: Request, file: Express.Multer.File, callback: any) => {
+    if(!file.originalname.match(/\.(pdf)$/)) {
+        return callback(new Error('Somente pdf são permitidos!'), false);
+    }
+    callback(null, true);
+}
