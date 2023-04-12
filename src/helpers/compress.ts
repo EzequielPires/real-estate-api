@@ -1,6 +1,7 @@
 import { readFile, unlink } from 'fs';
 import { promisify } from 'util';
 import * as sharp from 'sharp';
+import { FirebaseService } from 'src/services/firebase/firebase.service';
 //import { FirebaseService } from 'src/services/firebase/firebase.service';
 //import { S3Service } from 'src/services/s3.service';
 
@@ -28,10 +29,10 @@ export async function compressImage(file: Express.Multer.File) {
             file.path != `storage/${name}.webp` ? unlink(file.path, (err) => { }) : null
         })
         .catch();
-    //onst firebase = new FirebaseService();
-    //const path = __dirname + `/../../storage/${name}.webp`;
-    //const fileByFirebase = await firebase.uploadImage(null, path);
-    //{ fileByFirebase?.file?.path && unlink(`storage/${name}.webp`, (err) => { }) }
+    const firebase = new FirebaseService();
+    const path = __dirname + `/../../storage/${name}.webp`;
+    const fileByFirebase = await firebase.upload(path);
+    { fileByFirebase?.file?.path && unlink(`storage/${name}.webp`, (err) => { }) }
 
-    return `storage/${name}.webp`/* fileByFirebase?.file?.path ? fileByFirebase.file.path : `storage/${name}.webp` */;
+    return fileByFirebase?.file?.path ? fileByFirebase.file.path : `storage/${name}.webp`;
 }

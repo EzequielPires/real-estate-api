@@ -324,4 +324,15 @@ export class PropertiesService {
       }
     }
   }
+
+  async findDataByDashboard() {
+    try {
+      const query = this.propertyRepository.createQueryBuilder('property')
+      .groupBy("property.type");
+
+      return await query.getMany();
+    } catch (error) {
+      
+    }
+  }
 }

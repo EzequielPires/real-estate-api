@@ -27,6 +27,11 @@ import { InvoicesModule } from './modules/invoices/invoices.module';
 import { Invoice } from './modules/invoices/entities/invoice.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PdfInterceptor } from './interceptors/pdf.interceptor';
+import { BannerTypesModule } from './modules/banner-types/banner-types.module';
+import { BannersModule } from './modules/banners/banners.module';
+import { Banner } from './modules/banners/entities/banner.entity';
+import { BannerType } from './modules/banner-types/entities/banner-type.entity';
+import { FirebaseModule } from './services/firebase/firebase.module';
 
 @Module({
   imports: [
@@ -54,7 +59,9 @@ import { PdfInterceptor } from './interceptors/pdf.interceptor';
         State,
         User,
         Property,
-        Invoice
+        Invoice,
+        Banner,
+        BannerType
       ],
       synchronize: true,
     }),
@@ -67,6 +74,9 @@ import { PdfInterceptor } from './interceptors/pdf.interceptor';
     SalesContractsModule,
     PaymentsModule,
     InvoicesModule,
+    BannerTypesModule,
+    BannersModule,
+    FirebaseModule
   ],
   controllers: [AppController],
   providers: [
