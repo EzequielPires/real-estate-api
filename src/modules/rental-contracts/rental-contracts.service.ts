@@ -69,7 +69,7 @@ export class RentalContractsService {
 
   async findOne(id: number) {
     try {
-      const contract = await this.rentalContractRepository.findOne({where: {id}, relations: ['property', 'locator']});
+      const contract = await this.rentalContractRepository.findOne({where: {id}, relations: ['property', 'property.pickup', 'locator']});
 
       if(!contract) throw new Error('Contrato de locação não encontrado.');
 

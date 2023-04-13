@@ -1,5 +1,6 @@
 import { hashSync } from "bcrypt";
 import { Role } from "src/enums/role.enum";
+import { Lead } from "src/modules/leads/entities/lead.entity";
 import { Property } from "src/modules/properties/entities/property.entity";
 import { RentalContract } from "src/modules/rental-contracts/entities/rental-contract.entity";
 import { SalesContract } from "src/modules/sales-contracts/entities/sales-contract.entity";
@@ -60,6 +61,9 @@ export class User {
     
     @OneToMany(() => SalesContract, salesContract => salesContract.seller)
     salesContractsSeller: SalesContract[]; 
+
+    @OneToMany(() => Lead, lead => lead.realtor)
+    leads: Lead[];
 
     //End Contracts
 

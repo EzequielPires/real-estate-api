@@ -15,3 +15,10 @@ export enum Status {
     alugado = 'alugado',
     vendido = 'vendido'
 }
+export enum LeadType {
+    interesse = 'interesse',
+    visita = 'visita',
+    proposta = 'proposta',
+    financiamento = 'financiamento',
+    contact = 'contact',
+}

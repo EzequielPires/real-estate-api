@@ -19,8 +19,7 @@ export class SalesContractsService {
 
   async create(createSalesContractDto: CreateSalesContractDto) {
     try {
-      const {property, owner, buyer, seller, price} = createSalesContractDto;
-      console.log(property.id);
+      const {property, owner, buyer, seller, price, commission} = createSalesContractDto;
       const propertyAlreadyExists = await this.salesContractRepository.findOne({where: {
         property: {
           id: property.id
@@ -46,7 +45,8 @@ export class SalesContractsService {
       
       const contract = this.salesContractRepository.create({
         ...createSalesContractDto,
-        price: price.replace(/[^0-9]/g, '')
+        price: price.replace(/[^0-9]/g, ''),
+        commission: commission?.replace(/[^0-9]/g, '') ?? null,
       });
       
       await this.propertiesService.updateStatus(property.id, Status.vendido);
@@ -77,8 +77,22 @@ export class SalesContractsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} salesContract`;
+  async findOne(id: number) {
+    try {
+      const contract = await this.salesContractRepository.findOne({where: {id}, relations: ['property.pickup']});
+
+      if(!contract) throw new Error('Contrato de venda não encontrado.');
+
+      return {
+        success: true,
+        result: contract
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 
   update(id: number, updateSalesContractDto: UpdateSalesContractDto) {

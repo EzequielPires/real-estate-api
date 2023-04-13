@@ -2,6 +2,7 @@ import { AdType, Status } from "src/enums/property.enum";
 import { Address } from "src/modules/address/entities/address.entity";
 import { Detail } from "src/modules/details/entities/detail.entity";
 import { Invoice } from "src/modules/invoices/entities/invoice.entity";
+import { Lead } from "src/modules/leads/entities/lead.entity";
 import { PropertyType } from "src/modules/property-types/entities/property-type.entity";
 import { RentalContract } from "src/modules/rental-contracts/entities/rental-contract.entity";
 import { SalesContract } from "src/modules/sales-contracts/entities/sales-contract.entity";
@@ -98,4 +99,7 @@ export class Property {
     
     @OneToOne(() => SalesContract, salesContract => salesContract.property)
     salesContract: SalesContract;
+
+    @OneToMany(() => Lead, lead => lead.property)
+    leads: Lead[];
 }

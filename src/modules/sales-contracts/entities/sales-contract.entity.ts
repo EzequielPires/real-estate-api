@@ -10,6 +10,9 @@ export class SalesContract {
     @Column({type: 'decimal'})
     price: string;
 
+    @Column({type: 'decimal', nullable: true})
+    commission: string;
+
     @Column({nullable: true})
     paymentForm: string;
 
