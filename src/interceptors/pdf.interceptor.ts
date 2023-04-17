@@ -7,8 +7,6 @@ export class PdfInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest();
     const file = req.file;
-    
-    console.log(file)
 
    /*  const multer = require('multer');
     const upload = multer(multerOptions).single('pdf');

@@ -4,6 +4,7 @@ import { Lead } from "src/modules/leads/entities/lead.entity";
 import { Property } from "src/modules/properties/entities/property.entity";
 import { RentalContract } from "src/modules/rental-contracts/entities/rental-contract.entity";
 import { SalesContract } from "src/modules/sales-contracts/entities/sales-contract.entity";
+import { Token } from "src/modules/token/entities/token.entity";
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
@@ -62,10 +63,13 @@ export class User {
     @OneToMany(() => SalesContract, salesContract => salesContract.seller)
     salesContractsSeller: SalesContract[]; 
 
+    //End Contracts
+
     @OneToMany(() => Lead, lead => lead.realtor)
     leads: Lead[];
 
-    //End Contracts
+    @OneToMany(() => Token, token => token.user)
+    tokens: Token[];
 
     @BeforeInsert()
     hasPassword() {

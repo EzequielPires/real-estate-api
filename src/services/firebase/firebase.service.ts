@@ -18,8 +18,6 @@ export class FirebaseService {
                 public: true
             }).then(res => res[0]);
 
-            console.log(file);
-
             return {
                 success: true,
                 message: 'Upload realizado com sucesso.',
@@ -32,7 +30,6 @@ export class FirebaseService {
                 },
             };
         } catch (error) {
-            console.log(error);
             return {
                 success: false,
                 message: error.message

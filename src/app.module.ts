@@ -34,6 +34,8 @@ import { BannerType } from './modules/banner-types/entities/banner-type.entity';
 import { FirebaseModule } from './services/firebase/firebase.module';
 import { LeadsModule } from './modules/leads/leads.module';
 import { Lead } from './modules/leads/entities/lead.entity';
+import { Token } from './modules/token/entities/token.entity';
+import { Doc } from './services/doc';
 
 @Module({
   imports: [
@@ -64,7 +66,8 @@ import { Lead } from './modules/leads/entities/lead.entity';
         Invoice,
         Banner,
         BannerType,
-        Lead
+        Lead,
+        Token
       ],
       synchronize: true,
     }),
@@ -85,6 +88,7 @@ import { Lead } from './modules/leads/entities/lead.entity';
   controllers: [AppController],
   providers: [
     AppService,
+    Doc
   ],
 })
 export class AppModule { }

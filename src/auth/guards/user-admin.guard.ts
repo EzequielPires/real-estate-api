@@ -8,7 +8,6 @@ export class UserAdminGuard implements CanActivate {
         context: ExecutionContext,
       ): boolean | Promise<boolean> | Observable<boolean> {
         const {user} = context.switchToHttp().getRequest();
-        console.log(user.role);
         return user.role === Role.super_admin || user.role === Role.admin;
       }
 }

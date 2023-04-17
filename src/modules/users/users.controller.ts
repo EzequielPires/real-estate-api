@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
+import { ResetPasswordRequest, UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -19,59 +19,59 @@ export class UsersController {
   //Customer
   @Post('customers')
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create({...createUserDto, role: Role.customer});
+    return this.usersService.create({ ...createUserDto, role: Role.customer });
   }
 
   @Get('customers')
   findAll(@Query() query: FindUserDto) {
-    return this.usersService.findAll({...query, role: Role.customer});
+    return this.usersService.findAll({ ...query, role: Role.customer });
   }
-  
+
   //Owner
   @Post('owners')
   createOwner(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create({...createUserDto, role: Role.owner});
+    return this.usersService.create({ ...createUserDto, role: Role.owner });
   }
 
   @Get('owners')
   findAllOwner(@Query() query: FindUserDto) {
-    return this.usersService.findAll({...query, role: Role.owner});
+    return this.usersService.findAll({ ...query, role: Role.owner });
   }
 
   //Realtors
   @UseGuards(JwtAuthGuard, UserAdminGuard)
   @Post('realtors')
   createRealtor(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create({...createUserDto, role: Role.realtor});
+    return this.usersService.create({ ...createUserDto, role: Role.realtor });
   }
 
   @Get('realtors')
   findAllRealtors(@Query() query: FindUserDto) {
-    return this.usersService.findAll({...query, role: Role.realtor});
+    return this.usersService.findAll({ ...query, role: Role.realtor });
   }
 
   //Collaborators
   @UseGuards(JwtAuthGuard, UserAdminGuard)
   @Post('collaborators')
   createCollaborator(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create({...createUserDto, role: Role.collaborator});
+    return this.usersService.create({ ...createUserDto, role: Role.collaborator });
   }
 
   @Get('collaborators')
   findAllCollaborators(@Query() query: FindUserDto) {
-    return this.usersService.findAll({...query, role: Role.collaborator});
+    return this.usersService.findAll({ ...query, role: Role.collaborator });
   }
 
   //Administrators
   @UseGuards(JwtAuthGuard, UserAdminGuard)
   @Post('administrators')
   createAdministrators(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create({...createUserDto, role: Role.admin});
+    return this.usersService.create({ ...createUserDto, role: Role.admin });
   }
 
   @Get('administrators')
   findAllAdministrators(@Query() query: FindUserDto) {
-    return this.usersService.findAll({...query, role: Role.admin});
+    return this.usersService.findAll({ ...query, role: Role.admin });
   }
 
   //Outhers
@@ -107,5 +107,21 @@ export class UsersController {
   async uploadImage(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
     const path = await compressImage(file);
     return await this.usersService.uploadImage(id, path)
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() body) {
+    return this.usersService.sendForgotPassword(body.email);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() body: ResetPasswordRequest) {
+    return this.usersService.resetPassword(body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  changePassword(@Body() body: ResetPasswordRequest, @Req() req: any) {
+    return this.usersService.changePassword({ ...body, user_id: req.user.id });
   }
 }

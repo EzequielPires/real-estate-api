@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { RentalContractsService } from './rental-contracts.service';
 import { CreateRentalContractDto } from './dto/create-rental-contract.dto';
 import { UpdateRentalContractDto } from './dto/update-rental-contract.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UserAdminGuard } from 'src/auth/guards/user-admin.guard';
 
+@UseGuards(JwtAuthGuard, UserAdminGuard)
 @Controller('rental-contracts')
 export class RentalContractsController {
   constructor(private readonly rentalContractsService: RentalContractsService) {}

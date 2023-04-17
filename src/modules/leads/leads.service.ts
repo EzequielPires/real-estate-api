@@ -17,7 +17,6 @@ export class LeadsService {
     const {type} = createLeadDto;
     try {
       if(type && !LeadType[type]) throw new Error('Tipo de lead inválido.');
-      console.log(createLeadDto);
       const lead = this.leadRepository.create(createLeadDto);
 
       return {
