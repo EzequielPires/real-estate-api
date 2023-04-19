@@ -13,7 +13,7 @@ import { LocalStrategy } from "./strategies/local.strategy";
         PassportModule,
         JwtModule.register({
             privateKey: 'YXNkY2RrZnVlYmFzamJkYXNsa2ZmZHNoZ3BvamFzZGZqaWhhb2RpamZpYWJzZGZpam5zYWRrbA==',
-            signOptions: { expiresIn: '14400s' },
+            signOptions: { expiresIn: '86400s' },
         }),
         UsersModule
     ],
