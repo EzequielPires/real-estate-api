@@ -16,6 +16,6 @@ export class AppController {
 
   @Get('generate-contract')
   generateContract() {
-    return this.docSercice.generateContract()
+    //return this.docSercice.generateContract()
   }
 }

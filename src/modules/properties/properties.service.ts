@@ -85,7 +85,7 @@ export class PropertiesService {
       { stateId && query.andWhere('state.id = :stateId', { stateId }) }
       { cityId && query.andWhere('city.id = :cityId', { cityId }) }
       { districtId && query.andWhere('district.id = :districtId', { districtId }) }
-      { realtorId && query.andWhere('realtor.id = :realtorId', { realtorId }) }
+      { realtorId && query.andWhere('pickup.id = :realtorId', { realtorId }) }
       { priceMax && query.andWhere('district.id = :priceMax', { priceMax: priceMax.replace(/[^0-9]/g, '') }) }
       { priceMin && query.andWhere('district.id = :priceMin', { priceMin: priceMin.replace(/[^0-9]/g, '') }) }
 

@@ -8,17 +8,21 @@ import { UpdateRentalContractDto } from './dto/update-rental-contract.dto';
 import { RentalContract } from './entities/rental-contract.entity';
 import { PropertiesService } from '../properties/properties.service';
 import { Status } from 'src/enums/property.enum';
+import { AddressService } from '../address/address.service';
+import { Doc } from 'src/services/doc';
 
 @Injectable()
 export class RentalContractsService {
   constructor(
     @InjectRepository(RentalContract) private rentalContractRepository: Repository<RentalContract>,
     private userService: UsersService,
-    private propertiesService: PropertiesService
+    private propertiesService: PropertiesService,
+    private addressService: AddressService,
+    private readonly docSercice: Doc
   ) { }
 
   async create(createRentalContractDto: CreateRentalContractDto) {
-    const { owner, tenant, property, price } = createRentalContractDto;
+    const { owner, tenant, property, price, address } = createRentalContractDto;
     try {
       const rentalContractAlreadyExists = await this.rentalContractRepository.findOne({ where: { property: { id: property.id } } })
 
@@ -34,12 +38,15 @@ export class RentalContractsService {
         if (tenant && !tenantExists || tenantExists.role != Role.customer) throw new Error('Tenant invalid.');
       }
 
+      const newAddress = await this.addressService.create(address);
+
       const contract = this.rentalContractRepository.create({
         ...createRentalContractDto,
-        price: price.replace(/[^0-9]/g, '')
+        price: price.replace(/[^0-9]/g, ''),
+        address: newAddress
       });
 
-      await this.propertiesService.update(property.id, {status: Status.vendido});
+      await this.propertiesService.update(property.id, { status: Status.vendido });
 
       return {
         success: true,
@@ -69,9 +76,9 @@ export class RentalContractsService {
 
   async findOne(id: number) {
     try {
-      const contract = await this.rentalContractRepository.findOne({where: {id}, relations: ['property', 'property.pickup', 'locator']});
+      const contract = await this.rentalContractRepository.findOne({ where: { id }, relations: ['property', 'property.pickup', 'locator'] });
 
-      if(!contract) throw new Error('Contrato de locação não encontrado.');
+      if (!contract) throw new Error('Contrato de locação não encontrado.');
 
       return {
         success: true,
@@ -85,11 +92,106 @@ export class RentalContractsService {
     }
   }
 
-  update(id: number, updateRentalContractDto: UpdateRentalContractDto) {
-    return `This action updates a #${id} rentalContract`;
+  async update(id: number, updateRentalContractDto: UpdateRentalContractDto) {
+    try {
+      const { price, address } = updateRentalContractDto;
+      let newAddress;
+      const contract = await this.rentalContractRepository.findOne({ where: { id }, relations: ['property', 'property.pickup', 'locator', 'address'] });
+
+      if (!contract) throw new Error('Contrato de locação não encontrado.');
+
+      if (address) {
+        newAddress = await this.addressService.update(contract.address.id, address);
+      }
+
+      await this.rentalContractRepository.update(id, {
+        ...updateRentalContractDto,
+        address: newAddress ?? contract.address,
+        price: price.replace(/[^0-9]/g, ''),
+      });
+
+      return {
+        success: true,
+        result: await this.rentalContractRepository.findOne({ where: { id }, relations: ['property', 'property.pickup', 'locator', 'address'] }),
+        message: 'Contrato de locação atualizado com sucesso'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} rentalContract`;
+  async remove(id: number) {
+    try {
+      const contract = await this.rentalContractRepository.findOne({ where: { id }, relations: ['property', 'property.pickup', 'locator'] });
+
+      if (!contract) throw new Error('Contrato de locação não encontrado.');
+
+      await this.rentalContractRepository.delete(id);
+
+      return {
+        success: true,
+        message: 'Contrato de locação removido com sucesso.'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+
+  async generateDocument(id: number) {
+    try {
+      const contract = await this.rentalContractRepository.findOne({ where: { id }, relations: ['property', 'tenant', 'address'] });
+
+      if (!contract) throw new Error('Contrato de locação não encontrado.');
+
+      const path = await this.docSercice.generateContract(contract);
+
+      if (!path) throw new Error('Não foi possível gerar o documento de contrato de locação, entre em contato com o suporte.');
+
+      await this.rentalContractRepository.update(id, {
+        document: path
+      });
+
+      return {
+        success: true,
+        result: await this.rentalContractRepository.findOne({ where: { id }, relations: ['property', 'property.pickup', 'locator', 'tenant', 'address'] }),
+        message: 'Contrato de locação atualizado com sucesso',
+        path
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+
+  async uploadImage(id: number, path: string) {
+    try {
+      const contract = await this.rentalContractRepository.findOne({ where: { id } });
+
+      if (!contract) throw new Error('Contrato de locação não encontrada.');
+      if(!contract.images) contract.images = [];
+
+      contract.images.push(path);
+
+      await this.rentalContractRepository.update(id, contract);
+
+      return {
+        success: true,
+        images: contract.images,
+        message: 'Contrato de locação atualizado com sucesso.'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 }

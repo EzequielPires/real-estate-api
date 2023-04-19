@@ -1,3 +1,5 @@
+import { MaritalStatus } from "src/enums/rental.enum";
+import { Address } from "src/modules/address/entities/address.entity";
 import { Invoice } from "src/modules/invoices/entities/invoice.entity";
 import { Property } from "src/modules/properties/entities/property.entity";
 import { User } from "src/modules/users/entities/user.entity";
@@ -44,4 +46,36 @@ export class RentalContract {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    //tenant additional data
+    @Column()
+    cpf: string;
+
+    @Column()
+    rg: string;
+    
+    @Column()
+    profession: string;
+    
+    @Column()
+    nationality: string;
+    
+    @Column()
+    duration: number;
+    
+    @Column()
+    paymentLimit: number;
+    
+    @Column({nullable: true})
+    document: string;
+    
+    @Column({type: "simple-array", nullable: true})
+    images: Array<string>;
+    
+    @Column({type: 'simple-enum', enum: MaritalStatus, default: MaritalStatus.solteiro})
+    maritalStatus: MaritalStatus;
+
+    @OneToOne(() => Address, address => address.rentalContract, {eager: true})
+    @JoinColumn()
+    address: Address;
 }

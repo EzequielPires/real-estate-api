@@ -81,7 +81,8 @@ export class UsersService {
         .skip(page ? (limit ?? 15) * (page - 1) : 0)
         .take(limit ?? 15)
         .orderBy("user.name", 'ASC')
-        .andWhere('user.role != :role', {role: 'customer'});
+        .andWhere('user.role != :customer', {customer: 'customer'})
+        .andWhere('user.role != :owner', {owner: 'owner'});
       
         const [results, total] = await query.getManyAndCount();
 

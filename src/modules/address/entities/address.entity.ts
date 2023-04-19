@@ -3,6 +3,7 @@ import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn,
 import { City } from "./city.entity";
 import { District } from "./district.entity";
 import { State } from "./state.entity";
+import { RentalContract } from "src/modules/rental-contracts/entities/rental-contract.entity";
 
 type Location = {
     lat: number;
@@ -49,4 +50,7 @@ export class Address {
 
     @OneToOne(() => Property, property => property.address, {onDelete: 'CASCADE'})
     property: Property;
+    
+    @OneToOne(() => RentalContract, rentalContract => rentalContract.address, {onDelete: 'CASCADE'})
+    rentalContract: Property;
 }

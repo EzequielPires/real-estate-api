@@ -51,7 +51,8 @@
     "slugify": "^1.6.5",
     "stripe": "^11.16.0",
     "typeorm": "^0.3.12",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vanilla-masker": "^1.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
@@ -68,6 +69,7 @@
     "@types/pizzip": "^3.0.2",
     "@types/supertest": "^2.0.11",
     "@types/uuid": "^9.0.1",
+    "@types/vanilla-masker": "^1.2.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
