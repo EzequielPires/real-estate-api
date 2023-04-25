@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseInterceptors } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Doc } from './services/doc';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller()
 export class AppController {
@@ -14,8 +15,9 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('generate-contract')
-  generateContract() {
-    //return this.docSercice.generateContract()
-  }
+  @UseInterceptors(CacheInterceptor)
+  @Get('dashboard')
+    dashboard() {
+        return this.appService.dashboard();
+    }
 }

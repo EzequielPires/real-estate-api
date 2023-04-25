@@ -7,6 +7,7 @@ import { FindBannersDto } from './dto/find-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { editFileName } from 'src/helpers/string';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('banners')
 export class BannersController {
@@ -17,6 +18,7 @@ export class BannersController {
     return this.bannersService.create(createBannerDto);
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get()
   findAll(@Query() query: FindBannersDto) {
     return this.bannersService.findAll(query);

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
@@ -25,8 +25,6 @@ import { District } from './modules/address/entities/district.entity';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
 import { Invoice } from './modules/invoices/entities/invoice.entity';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { PdfInterceptor } from './interceptors/pdf.interceptor';
 import { BannerTypesModule } from './modules/banner-types/banner-types.module';
 import { BannersModule } from './modules/banners/banners.module';
 import { Banner } from './modules/banners/entities/banner.entity';
@@ -39,6 +37,10 @@ import { Doc } from './services/doc';
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 86400,
+    }),
     ConfigModule.forRoot({
       isGlobal: true
     }),

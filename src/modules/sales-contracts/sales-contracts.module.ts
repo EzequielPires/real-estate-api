@@ -9,6 +9,7 @@ import { PropertiesModule } from '../properties/properties.module';
 @Module({
   imports: [TypeOrmModule.forFeature([SalesContract]), UsersModule, PropertiesModule],
   controllers: [SalesContractsController],
-  providers: [SalesContractsService]
+  providers: [SalesContractsService],
+  exports: [SalesContractsService]
 })
 export class SalesContractsModule {}

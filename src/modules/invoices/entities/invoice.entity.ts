@@ -26,7 +26,7 @@ export class Invoice {
     @Column({nullable: true})
     path: string;
 
-    @ManyToOne(() => RentalContract, rentalContract => rentalContract.invoices)
+    @ManyToOne(() => RentalContract, rentalContract => rentalContract.invoices, {onDelete: 'CASCADE'})
     rentalContract: RentalContract;
 
     @CreateDateColumn()

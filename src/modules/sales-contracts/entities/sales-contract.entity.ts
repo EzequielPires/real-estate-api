@@ -16,7 +16,7 @@ export class SalesContract {
     @Column({nullable: true})
     paymentForm: string;
 
-    @OneToOne(() => Property, property => property.salesContract, {eager: true, nullable: false})
+    @OneToOne(() => Property, property => property.salesContract, {eager: true, nullable: false, onDelete: 'CASCADE'})
     @JoinColumn()
     property: Property;
 

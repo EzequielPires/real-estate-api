@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, CacheKey } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
@@ -8,6 +8,7 @@ import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { editFileName } from 'src/helpers/string';
 import { compressImage } from 'src/helpers/compress';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('properties')
 export class PropertiesController {
@@ -18,19 +19,36 @@ export class PropertiesController {
     return this.propertiesService.create(createPropertyDto);
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get()
   findAll(@Query() query: FindPropertyDto) {
     return this.propertiesService.findAll(query);
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get('code/:id')
   findOneByCode(@Param('id') code: string) {
     return this.propertiesService.findOneByCode(code);
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.propertiesService.findOne(+id);
+  }
+
+  @Patch(':id/emphasis')
+  async changeEmphasis(@Param('id') id: string, @Body() body: UpdatePropertyDto) {
+    return await this.propertiesService.changeEmphasis(+id, {
+      emphasis: body.emphasis
+    });
+  }
+  
+  @Patch(':id/status')
+  async changeStatus(@Param('id') id: string, @Body() body: UpdatePropertyDto) {
+    return await this.propertiesService.changeStatus(+id, {
+      status: body.status
+    });
   }
 
   @Patch(':id')

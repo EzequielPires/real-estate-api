@@ -11,6 +11,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName } from 'src/helpers/string';
 import { compressImage } from 'src/helpers/compress';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('users')
 export class UsersController {
@@ -22,6 +23,7 @@ export class UsersController {
     return this.usersService.create({ ...createUserDto, role: Role.customer });
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get('customers')
   findAll(@Query() query: FindUserDto) {
     return this.usersService.findAll({ ...query, role: Role.customer });
@@ -33,6 +35,7 @@ export class UsersController {
     return this.usersService.create({ ...createUserDto, role: Role.owner });
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get('owners')
   findAllOwner(@Query() query: FindUserDto) {
     return this.usersService.findAll({ ...query, role: Role.owner });
@@ -45,6 +48,7 @@ export class UsersController {
     return this.usersService.create({ ...createUserDto, role: Role.realtor });
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get('realtors')
   findAllRealtors(@Query() query: FindUserDto) {
     return this.usersService.findAll({ ...query, role: Role.realtor });
@@ -57,6 +61,7 @@ export class UsersController {
     return this.usersService.create({ ...createUserDto, role: Role.collaborator });
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get('collaborators')
   findAllCollaborators(@Query() query: FindUserDto) {
     return this.usersService.findAll({ ...query, role: Role.collaborator });
@@ -69,17 +74,20 @@ export class UsersController {
     return this.usersService.create({ ...createUserDto, role: Role.admin });
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get('administrators')
   findAllAdministrators(@Query() query: FindUserDto) {
     return this.usersService.findAll({ ...query, role: Role.admin });
   }
 
   //Outhers
+  @UseInterceptors(CacheInterceptor)
   @Get()
   findAllNotCustomer(@Query() query: FindUserDto) {
     return this.usersService.findAllNotCustomer(query);
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);

@@ -190,4 +190,23 @@ export class InvoicesService {
       return false;
     }
   }
+
+  async countContractsByMonth() {
+    try {
+      const query = this.invoiceRepository.createQueryBuilder('invoice')
+        .select(`
+          DATE_FORMAT(payment, '%Y-%m') AS month,
+          SUM(price) AS invoicing
+        `)
+        .where('invoice.payment >= DATE_SUB(NOW(), INTERVAL 7 MONTH)')
+        .groupBy('month');
+
+      return await query.getRawMany();
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
 }

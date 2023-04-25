@@ -18,6 +18,7 @@ export class CreatePropertyDto {
     condominium: string;
     iptu: string;
     exemptIptu: boolean;
+    emphasis: boolean;
     usefulArea: number;
     totalArea: number;
     images: Array<string>;

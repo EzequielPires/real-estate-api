@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBannerDto } from './dto/create-banner.dto';
@@ -6,11 +6,14 @@ import { FindBannersDto } from './dto/find-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 import { Banner } from './entities/banner.entity';
 import { compressImage } from 'src/helpers/compress';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class BannersService {
   constructor(
     @InjectRepository(Banner) private bannerRepository: Repository<Banner>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) { }
 
   async create(createBannerDto: CreateBannerDto) {
@@ -26,6 +29,8 @@ export class BannersService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -91,6 +96,8 @@ export class BannersService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -111,6 +118,8 @@ export class BannersService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -136,6 +145,8 @@ export class BannersService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 }

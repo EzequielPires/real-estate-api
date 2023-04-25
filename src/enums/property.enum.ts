@@ -13,7 +13,8 @@ export enum DetailType {
 export enum Status {
     disponivel = 'disponivel',
     alugado = 'alugado',
-    vendido = 'vendido'
+    vendido = 'vendido',
+    indisponivel = 'indisponivel',
 }
 export enum LeadType {
     interesse = 'interesse',

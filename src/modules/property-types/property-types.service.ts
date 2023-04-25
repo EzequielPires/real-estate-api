@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import slugify from 'slugify';
 import { Repository } from 'typeorm';
 import { CreatePropertyTypeDto } from './dto/create-property-type.dto';
 import { UpdatePropertyTypeDto } from './dto/update-property-type.dto';
 import { PropertyType } from './entities/property-type.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PropertyTypesService {
   constructor(
-    @InjectRepository(PropertyType) private propertyTypeRepository: Repository<PropertyType>
+    @InjectRepository(PropertyType) private propertyTypeRepository: Repository<PropertyType>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) { }
 
   async create(createPropertyTypeDto: CreatePropertyTypeDto) {
@@ -27,6 +30,8 @@ export class PropertyTypesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -73,6 +78,8 @@ export class PropertyTypesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -93,6 +100,8 @@ export class PropertyTypesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/enums/role.enum';
 import { Repository } from 'typeorm';
@@ -12,10 +12,13 @@ import { FindPropertyDto } from './dto/find-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { Property } from './entities/property.entity';
 import { Status } from 'src/enums/property.enum';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PropertiesService {
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(Property) private propertyRepository: Repository<Property>,
     private userService: UsersService,
     private addressService: AddressService,
@@ -58,6 +61,8 @@ export class PropertiesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -178,6 +183,66 @@ export class PropertiesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
+    }
+  }
+
+  async changeEmphasis(id: number, updatePropertyDto: UpdatePropertyDto) {
+    try {
+      const { emphasis } = updatePropertyDto;
+
+      const property = await this.propertyRepository.findOne({ where: { id }, relations: ['address'] });
+      property.emphasis = emphasis;
+
+      if (!property) throw new Error('Propriedade não encontrada.');
+
+      await this.propertyRepository.update(id, {
+        emphasis
+      });
+
+
+      return {
+        success: true,
+        property: property,
+        message: 'Propriedade atualizada com sucesso.'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    } finally {
+      await this.cacheManager.reset();
+    }
+  }
+
+  async changeStatus(id: number, updatePropertyDto: UpdatePropertyDto) {
+    try {
+      const { status } = updatePropertyDto;
+
+      const property = await this.propertyRepository.findOne({ where: { id }, relations: ['address'] });
+      property.status = status;
+
+      if (!property) throw new Error('Propriedade não encontrada.');
+
+      if (!Status[status]) throw new Error('Status inválido.');
+
+      await this.propertyRepository.update(id, { status: Status[status] });
+
+
+      return {
+        success: true,
+        property: property,
+        message: 'Propriedade atualizada com sucesso.'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -200,6 +265,8 @@ export class PropertiesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -220,6 +287,8 @@ export class PropertiesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -253,6 +322,8 @@ export class PropertiesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -276,6 +347,8 @@ export class PropertiesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -302,21 +375,42 @@ export class PropertiesService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
   async updateStatus(id: number, status: Status) {
     try {
-      const property = await this.propertyRepository.findOne({where: {id}});
+      const property = await this.propertyRepository.findOne({ where: { id } });
 
-      if(!property) throw new Error('Propriedade não encontrada');
+      if (!property) throw new Error('Propriedade não encontrada');
 
-      await this.propertyRepository.update(id, {status});
+      await this.propertyRepository.update(id, { status });
 
       return {
         success: true,
         message: 'Status alterado com sucesso.'
-      }      
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    } finally {
+      await this.cacheManager.reset();
+    }
+  }
+
+  async findDataByDashboard() {
+    try {
+      const query = this.propertyRepository.createQueryBuilder('property')
+        .select("property.type")
+        .addSelect("SUM(CASE WHEN property.adType = 'aluguel' THEN 1 ELSE 0 END)", "num_aluguel")
+        .addSelect("SUM(CASE WHEN property.adType = 'venda' THEN 1 ELSE 0 END)", "num_venda")
+        .groupBy("property.type");
+
+      return await query.getRawMany();
     } catch (error) {
       return {
         success: false,
@@ -325,14 +419,21 @@ export class PropertiesService {
     }
   }
 
-  async findDataByDashboard() {
+  async countPropertiesByTypeAndMonth() {
     try {
       const query = this.propertyRepository.createQueryBuilder('property')
-      .groupBy("property.type");
+        .select('COUNT(*) as count')
+        .addSelect('property.adType as adType')
+        .addSelect("DATE_FORMAT(property.createdAt, '%Y-%m') as month")
+        .groupBy('adType, month')
+        .orderBy('month');
 
-      return await query.getMany();
+      return await query.getRawMany();
     } catch (error) {
-      
+      return {
+        success: false,
+        message: error.message
+      }
     }
   }
 }

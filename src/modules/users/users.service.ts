@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/enums/role.enum';
 import { Repository } from 'typeorm';
@@ -11,6 +11,8 @@ import { addHours } from 'src/helpers/date';
 import { TokenService } from '../token/token.service';
 import { v4 as uuidV4 } from "uuid";
 import { NodemailerService } from 'src/services/nodemailer/nodemailer';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 export interface ResetPasswordRequest {
   token: string,
@@ -23,6 +25,7 @@ export interface ResetPasswordRequest {
 @Injectable()
 export class UsersService {
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(User) private userRepository: Repository<User>,
     private tokenService: TokenService,
     private nodemailerService: NodemailerService
@@ -44,6 +47,8 @@ export class UsersService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -170,6 +175,8 @@ export class UsersService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 
@@ -190,6 +197,8 @@ export class UsersService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
   
@@ -213,6 +222,8 @@ export class UsersService {
         success: false,
         message: error.message
       }
+    } finally {
+      await this.cacheManager.reset();
     }
   }
 

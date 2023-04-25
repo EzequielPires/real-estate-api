@@ -26,7 +26,7 @@ export class Lead {
     @ManyToOne(() => User, user => user.leads, { eager: true })
     realtor: User;
 
-    @ManyToOne(() => Property, property => property.leads, { eager: true })
+    @ManyToOne(() => Property, property => property.leads, { eager: true, onDelete: 'CASCADE' })
     property: Property;
 
     @CreateDateColumn({ name: 'created_at' })

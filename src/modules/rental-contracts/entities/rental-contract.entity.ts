@@ -25,7 +25,7 @@ export class RentalContract {
     @Column({type: 'decimal', nullable: true})
     earlyTerminationFine: number;
 
-    @OneToOne(() => Property, property => property.rentalContract, {eager: true, nullable: false})
+    @OneToOne(() => Property, property => property.rentalContract, {eager: true, nullable: false, onDelete: 'CASCADE'})
     @JoinColumn()
     property: Property;
 

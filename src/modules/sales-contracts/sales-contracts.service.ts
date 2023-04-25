@@ -15,40 +15,42 @@ export class SalesContractsService {
     @InjectRepository(SalesContract) private salesContractRepository: Repository<SalesContract>,
     private userService: UsersService,
     private propertiesService: PropertiesService
-  ) {}
+  ) { }
 
   async create(createSalesContractDto: CreateSalesContractDto) {
     try {
-      const {property, owner, buyer, seller, price, commission} = createSalesContractDto;
-      const propertyAlreadyExists = await this.salesContractRepository.findOne({where: {
-        property: {
-          id: property.id
+      const { property, owner, buyer, seller, price, commission } = createSalesContractDto;
+      const propertyAlreadyExists = await this.salesContractRepository.findOne({
+        where: {
+          property: {
+            id: property.id
+          }
         }
-      }});
-      
-      if(property && propertyAlreadyExists) throw new Error('Já existe um contrado de venda.');
-      
+      });
+
+      if (property && propertyAlreadyExists) throw new Error('Já existe um contrado de venda.');
+
       if (owner) {
         const ownerExists = await this.userService.findOne(owner.id).then(res => res.user);
         if (owner && !ownerExists || ownerExists.role != Role.owner) throw new Error('Owner invalid.');
       }
-      
+
       if (buyer) {
         const buyerExists = await this.userService.findOne(buyer.id).then(res => res.user);
         if (buyer && !buyerExists || buyerExists.role != Role.customer) throw new Error('Buyer invalid.');
       }
-      
+
       if (seller) {
         const sellerExists = await this.userService.findOne(seller.id).then(res => res.user);
         if (seller && !sellerExists || sellerExists.role != Role.realtor) throw new Error('Seller invalid.');
       }
-      
+
       const contract = this.salesContractRepository.create({
         ...createSalesContractDto,
         price: price.replace(/[^0-9]/g, ''),
         commission: commission?.replace(/[^0-9]/g, '') ?? null,
       });
-      
+
       await this.propertiesService.updateStatus(property.id, Status.vendido);
 
       return {
@@ -79,9 +81,9 @@ export class SalesContractsService {
 
   async findOne(id: number) {
     try {
-      const contract = await this.salesContractRepository.findOne({where: {id}, relations: ['property.pickup']});
+      const contract = await this.salesContractRepository.findOne({ where: { id }, relations: ['property.pickup'] });
 
-      if(!contract) throw new Error('Contrato de venda não encontrado.');
+      if (!contract) throw new Error('Contrato de venda não encontrado.');
 
       return {
         success: true,
@@ -101,8 +103,8 @@ export class SalesContractsService {
 
   async remove(id: number) {
     try {
-      const contract = await this.salesContractRepository.findOne({where: {id}, relations: ['property']});
-      if(!contract) throw new Error('Contrato de venda não encontrado');
+      const contract = await this.salesContractRepository.findOne({ where: { id }, relations: ['property'] });
+      if (!contract) throw new Error('Contrato de venda não encontrado');
 
       await this.salesContractRepository.delete(id);
       await this.propertiesService.updateStatus(contract.property.id, Status.disponivel);
@@ -111,6 +113,24 @@ export class SalesContractsService {
         success: true,
         message: 'Contrato de venda removido com sucesso.'
       }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+  async countContractsByMonth() {
+    try {
+      const query = this.salesContractRepository.createQueryBuilder('salesContract')
+        .select(`
+          DATE_FORMAT(date, '%Y-%m') AS month,
+          SUM(price) AS invoicing
+        `)
+        .where('salesContract.date >= DATE_SUB(NOW(), INTERVAL 7 MONTH)')
+        .groupBy('month');
+
+      return await query.getRawMany();
     } catch (error) {
       return {
         success: false,
