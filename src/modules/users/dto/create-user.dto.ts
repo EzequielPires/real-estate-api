@@ -12,4 +12,6 @@ export class CreateUserDto {
     phone: string;
 
     role?: Role;
+
+    creci?: string;
 }

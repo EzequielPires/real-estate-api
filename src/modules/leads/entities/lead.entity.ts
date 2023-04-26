@@ -23,7 +23,7 @@ export class Lead {
     @Column({ type: "text", nullable: true })
     message: string;
 
-    @ManyToOne(() => User, user => user.leads, { eager: true })
+    @ManyToOne(() => User, user => user.leads, { eager: true, onDelete: 'SET NULL'})
     realtor: User;
 
     @ManyToOne(() => Property, property => property.leads, { eager: true, onDelete: 'CASCADE' })

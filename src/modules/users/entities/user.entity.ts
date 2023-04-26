@@ -27,6 +27,9 @@ export class User {
     
     @Column({nullable: true})
     document: string;
+    
+    @Column({nullable: true})
+    creci: string;
 
     @Column({nullable: true})
     avatar: string;

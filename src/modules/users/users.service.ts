@@ -208,13 +208,13 @@ export class UsersService {
 
       if (!property) throw new Error('Propriedade não encontrada.');
 
-      property.avatar = path;
-
-      await this.userRepository.update(id, property);
+      await this.userRepository.update(id, {
+        avatar: path
+      });
 
       return {
         success: true,
-        path: property.avatar,
+        path: path,
         message: 'Avatar atualizada com sucesso.'
       }
     } catch (error) {

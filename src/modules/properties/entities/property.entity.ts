@@ -75,10 +75,10 @@ export class Property {
     @JoinColumn()
     address: Address;
 
-    @ManyToOne(() => User, user => user.capturedProperties)
+    @ManyToOne(() => User, user => user.capturedProperties, {onDelete: 'SET NULL'})
     pickup: User;
 
-    @ManyToOne(() => User, user => user.ownerProperties)
+    @ManyToOne(() => User, user => user.ownerProperties, {onDelete: 'SET NULL'})
     owner: User;
     
     @ManyToOne(() => User, user => user.favoriteProperties)

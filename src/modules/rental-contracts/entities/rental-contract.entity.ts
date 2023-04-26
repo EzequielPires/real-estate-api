@@ -35,7 +35,7 @@ export class RentalContract {
     @ManyToOne(() => User, user => user.rentalContracts, {eager: true, nullable: false})
     owner: User;
     
-    @ManyToOne(() => User, user => user.rentalContractsLocator, {eager: true, nullable: false})
+    @ManyToOne(() => User, user => user.rentalContractsLocator, {eager: true, nullable: true, onDelete: 'SET NULL'})
     locator: User;
 
     @ManyToOne(() => User, user => user.rentalContractsTenant, {eager: true, nullable: false})
