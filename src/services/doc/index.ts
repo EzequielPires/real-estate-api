@@ -23,13 +23,16 @@ export interface ContractData {
     endContract: string;
     price: string;
     paymentLimit: string;
+    signatureDate: string;
 }
 
 export class Doc {
     async generateContract(rentalContract: RentalContract) {
         try {
             const template = fs.readFileSync(path.resolve(__dirname, '../../../modelo_contrato.docx'), 'binary');
-            const { property } = rentalContract;
+            const { property, signatureDate } = rentalContract;
+            const date = new Date(signatureDate);
+            date.setHours(date.getHours() + 4);
             const contract: ContractData = {
                 name: rentalContract.tenant.name,
                 nationality: rentalContract.nationality,
@@ -45,7 +48,8 @@ export class Doc {
                 propertyAddress: `${property.address.route}, ${property.address.number} - ${property.address.district.name}, ${property.address.city.name} - ${property.address.state.shortName}`,
                 rg: rentalContract.rg,
                 startContract: formatDate(new Date(rentalContract.end)),
-                type: property.type.name
+                type: property.type.name,
+                signatureDate: date.toLocaleDateString()
             };
 
 

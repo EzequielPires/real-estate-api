@@ -23,6 +23,19 @@ export class InvoicesController {
   @UseGuards(JwtAuthGuard, UserAdminGuard)
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
+      destination: './storage/invoices/voucher',
+      filename: editFileName
+    }),
+    fileFilter: pdfFileFilter,
+  }))
+  @Post(':id/upload/voucher')
+  async uploadVoucher(@UploadedFile() pdfFile: Express.Multer.File, @Param('id') id: string) {
+    return this.invoicesService.update(id, {voucher: pdfFile.path});
+  }
+  
+  @UseGuards(JwtAuthGuard, UserAdminGuard)
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
       destination: './storage/invoices',
       filename: editFileName
     }),

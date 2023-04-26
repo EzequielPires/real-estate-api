@@ -7,6 +7,7 @@ export class CreateRentalContractDto {
     id: number;
     price: string;
     start: Date;
+    signatureDate?: Date;
     end: Date;
     fineDelay: number;
     earlyTerminationFine: number;

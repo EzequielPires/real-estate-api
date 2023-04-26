@@ -8,13 +8,16 @@ import { PropertiesService } from '../properties/properties.service';
 import { RentalContractsService } from '../rental-contracts/rental-contracts.service';
 import { RentalContract } from '../rental-contracts/entities/rental-contract.entity';
 import { FindInvoiceDto } from './dto/find-invoice.dto';
+import { NodemailerService } from 'src/services/nodemailer/nodemailer';
+import { Status } from 'src/enums/invoice.enum';
+import { maskPrice } from 'src/helpers/mask';
 
 @Injectable()
 export class InvoicesService {
   constructor(
     @InjectRepository(Invoice) private invoiceRepository: Repository<Invoice>,
-    private propertiesService: PropertiesService,
-    private rentalContractsService: RentalContractsService
+    private rentalContractsService: RentalContractsService,
+    private nodemailerService: NodemailerService
   ) { }
 
   async create({ expiration, reference, rentalContract, price }: CreateInvoiceDto) {
@@ -62,6 +65,7 @@ export class InvoicesService {
         .leftJoinAndSelect('rentalContract.tenant', 'tenant')
         .leftJoinAndSelect('rentalContract.property', 'property')
         .leftJoinAndSelect('property.address', 'address')
+        .leftJoinAndSelect('property.type', 'type')
         .leftJoinAndSelect('address.state', 'state')
         .leftJoinAndSelect('address.city', 'city')
         .leftJoinAndSelect('address.district', 'district')
@@ -118,10 +122,11 @@ export class InvoicesService {
     }
   }
 
-  async update(id: string, { expiration, price, reference, status, path, payment }: UpdateInvoiceDto) {
+  async update(id: string, { expiration, price, reference, status, path, payment, voucher }: UpdateInvoiceDto) {
     try {
       const invoice = await this.invoiceRepository.findOne({
         where: { id },
+        relations: ['rentalContract.tenant']
       });
       if (!invoice) throw new Error('Fatura não encontrada.');
 
@@ -131,8 +136,18 @@ export class InvoicesService {
         reference: reference ?? invoice.reference, 
         status: status ?? invoice.status,
         path: path ?? invoice.path,
+        voucher: voucher ?? invoice.voucher,
         payment: payment ?? invoice.payment,
       });
+
+      if(status === Status.pago) {
+        await this.nodemailerService.sendEmailPaymentInvoice({
+          email: invoice.rentalContract.tenant.email,
+          date: new Date(invoice.expiration).toLocaleDateString(),
+          price: maskPrice(invoice.price),
+          title: 'Rotina imóveis - Aviso de Recebimento de Fatura'
+        });
+      }
 
       return {
         success: true,

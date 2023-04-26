@@ -10,6 +10,7 @@ export class CreateInvoiceDto {
     reference?: Date;
     price?: string;
     path?: string;
+    voucher?: string;
     rentalContract?: RentalContract;
     property?: Property;
 }

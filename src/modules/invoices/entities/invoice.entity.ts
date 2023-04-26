@@ -25,6 +25,9 @@ export class Invoice {
 
     @Column({nullable: true})
     path: string;
+    
+    @Column({nullable: true})
+    voucher: string;
 
     @ManyToOne(() => RentalContract, rentalContract => rentalContract.invoices, {onDelete: 'CASCADE'})
     rentalContract: RentalContract;

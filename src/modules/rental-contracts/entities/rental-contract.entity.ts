@@ -14,6 +14,9 @@ export class RentalContract {
     price: string;
 
     @Column({type: 'datetime'})
+    signatureDate: Date;
+    
+    @Column({type: 'datetime'})
     start: Date;
 
     @Column({type: 'datetime'})
