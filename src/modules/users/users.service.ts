@@ -30,6 +30,7 @@ export class UsersService {
     private tokenService: TokenService,
     private nodemailerService: NodemailerService
   ) { }
+  
   async create(createUserDto: CreateUserDto) {
     try {
       const userAlreadyExists = await this.findOneByEmail(createUserDto.email);

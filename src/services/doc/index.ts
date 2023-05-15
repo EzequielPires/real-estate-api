@@ -24,13 +24,15 @@ export interface ContractData {
     price: string;
     paymentLimit: string;
     signatureDate: string;
+    guarantor?: string;
+    shorts?: string;
 }
 
 export class Doc {
     async generateContract(rentalContract: RentalContract) {
         try {
             const template = fs.readFileSync(path.resolve(__dirname, '../../../modelo_contrato.docx'), 'binary');
-            const { property, signatureDate } = rentalContract;
+            const { property, signatureDate, guarantorCpf, guarantorEmail, guarantorMaritalStatus, guarantorName, guarantorNationality, guarantorPhone, guarantorProfession, guarantorRg } = rentalContract;
             const date = new Date(signatureDate);
             date.setHours(date.getHours() + 4);
             const contract: ContractData = {
@@ -44,12 +46,14 @@ export class Doc {
                 paymentLimit: rentalContract.paymentLimit.toString(),
                 phone: maskPhone(rentalContract.tenant.phone),
                 price: maskPrice(rentalContract.price),
+                shorts: maskPrice(rentalContract.shorts),
                 profession: rentalContract.profession,
                 propertyAddress: `${property.address.route}, ${property.address.number} - ${property.address.district.name}, ${property.address.city.name} - ${property.address.state.shortName}`,
                 rg: rentalContract.rg,
                 startContract: formatDate(new Date(rentalContract.end)),
                 type: property.type.name,
-                signatureDate: date.toLocaleDateString()
+                signatureDate: date.toLocaleDateString(),
+                guarantor: `${guarantorName ?? 'XXXXXX'}, ${guarantorNationality ?? 'XXXXXX'}, ${guarantorMaritalStatus ?? 'XXXXXX'}, ${guarantorProfession ?? 'XXXXXX'}, RG nº ${guarantorCpf ?? 'XXXXXX'}, CPF ${guarantorRg ?? 'XXXXXX'}, Tel: ${guarantorPhone ?? 'XXXXXX'}`
             };
 
 

@@ -12,6 +12,9 @@ export class RentalContract {
 
     @Column({type: 'decimal'})
     price: string;
+    
+    @Column({type: 'decimal', nullable: true})
+    shorts: string;
 
     @Column({type: 'datetime'})
     signatureDate: Date;
@@ -32,7 +35,7 @@ export class RentalContract {
     @JoinColumn()
     property: Property;
 
-    @ManyToOne(() => User, user => user.rentalContracts, {eager: true, nullable: false})
+    @ManyToOne(() => User, user => user.rentalContracts, {eager: true, nullable: true})
     owner: User;
     
     @ManyToOne(() => User, user => user.rentalContractsLocator, {eager: true, nullable: true, onDelete: 'SET NULL'})
@@ -77,8 +80,34 @@ export class RentalContract {
     
     @Column({type: 'simple-enum', enum: MaritalStatus, default: MaritalStatus.solteiro})
     maritalStatus: MaritalStatus;
-
+    
     @OneToOne(() => Address, address => address.rentalContract, {eager: true})
     @JoinColumn()
     address: Address;
+    
+
+    //tenant additional data
+    @Column({nullable: true})
+    guarantorName: string;
+
+    @Column({nullable: true})
+    guarantorEmail: string;
+
+    @Column({nullable: true})
+    guarantorCpf: string;
+
+    @Column({nullable: true})
+    guarantorRg: string;
+
+    @Column({nullable: true})
+    guarantorProfession: string;
+    
+    @Column({nullable: true})
+    guarantorNationality: string;
+
+    @Column({nullable: true})
+    guarantorPhone: string;
+
+    @Column({type: 'simple-enum', enum: MaritalStatus, default: MaritalStatus.solteiro})
+    guarantorMaritalStatus: MaritalStatus;
 }

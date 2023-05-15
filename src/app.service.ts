@@ -6,6 +6,7 @@ import { PropertiesService } from './modules/properties/properties.service';
 import { LeadsService } from './modules/leads/leads.service';
 import { SalesContractsService } from './modules/sales-contracts/sales-contracts.service';
 import { InvoicesService } from './modules/invoices/invoices.service';
+import { RentalContractsService } from './modules/rental-contracts/rental-contracts.service';
 
 @Injectable()
 export class AppService {
@@ -13,7 +14,8 @@ export class AppService {
     private propertyService: PropertiesService,
     private leadService: LeadsService,
     private salesContractsService: SalesContractsService,
-    private invoiceService: InvoicesService
+    private invoiceService: InvoicesService,
+    private rentalService: RentalContractsService
   ) { }
 
   async getHello() {
@@ -29,6 +31,7 @@ export class AppService {
       }).then(res => res.results),
       salesContracts: await this.salesContractsService.countContractsByMonth(),
       rentalContracts: await this.invoiceService.countContractsByMonth(),
+      rentalContractsData: await this.rentalService.findAll().then(res => res.results),
     };
   }
 }

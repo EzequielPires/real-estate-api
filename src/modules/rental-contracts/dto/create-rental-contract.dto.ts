@@ -7,6 +7,7 @@ export class CreateRentalContractDto {
     id: number;
     price: string;
     start: Date;
+    shorts: string;
     signatureDate?: Date;
     end: Date;
     fineDelay: number;
@@ -24,4 +25,13 @@ export class CreateRentalContractDto {
     paymentLimit: number;
     maritalStatus: MaritalStatus;
     address: Address;
+
+    guarantorName: string;
+    guarantorEmail: string;
+    guarantorCpf: string;
+    guarantorRg: string;
+    guarantorProfession: string;
+    guarantorNationality: string;
+    guarantorPhone: string;
+    guarantorMaritalStatus: MaritalStatus;
 }

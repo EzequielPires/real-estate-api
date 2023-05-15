@@ -22,7 +22,7 @@ export class RentalContractsService {
   ) { }
 
   async create(createRentalContractDto: CreateRentalContractDto) {
-    const { owner, tenant, property, price, address } = createRentalContractDto;
+    const { owner, tenant, property, price, address, shorts } = createRentalContractDto;
     try {
       const rentalContractAlreadyExists = await this.rentalContractRepository.findOne({ where: { property: { id: property.id } } })
 
@@ -43,6 +43,7 @@ export class RentalContractsService {
       const contract = this.rentalContractRepository.create({
         ...createRentalContractDto,
         price: price.replace(/[^0-9]/g, ''),
+        shorts: shorts ? shorts.replace(/[^0-9]/g, '') : null,
         address: newAddress
       });
 
@@ -64,7 +65,11 @@ export class RentalContractsService {
     try {
       return {
         success: true,
-        results: await this.rentalContractRepository.find()
+        results: await this.rentalContractRepository.find({
+          order: {
+            end: 'DESC'
+          }
+        })
       }
     } catch (error) {
       return {
@@ -94,7 +99,7 @@ export class RentalContractsService {
 
   async update(id: number, updateRentalContractDto: UpdateRentalContractDto) {
     try {
-      const { price, address } = updateRentalContractDto;
+      const { price, address, shorts } = updateRentalContractDto;
       let newAddress;
       const contract = await this.rentalContractRepository.findOne({ where: { id }, relations: ['property', 'property.pickup', 'locator', 'address'] });
 
@@ -108,6 +113,7 @@ export class RentalContractsService {
         ...updateRentalContractDto,
         address: newAddress ?? contract.address,
         price: price.replace(/[^0-9]/g, ''),
+        shorts: shorts ? shorts.replace(/[^0-9]/g, '') : null,
       });
 
       return {
