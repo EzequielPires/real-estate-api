@@ -7,7 +7,7 @@ export class Token {
     @PrimaryColumn('uuid')
     refresh_token: string;
 
-    @ManyToOne(() => User, user => user.tokens)
+    @ManyToOne(() => User, user => user.tokens, {onDelete: 'CASCADE'})
     user: User;
 
     @Column()
