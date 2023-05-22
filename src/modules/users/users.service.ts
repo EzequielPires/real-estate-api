@@ -33,10 +33,10 @@ export class UsersService {
   
   async create(createUserDto: CreateUserDto) {
     try {
-      const userAlreadyExists = await this.findOneByEmail(createUserDto.email);
-
-      if (userAlreadyExists.user) throw new Error('Usuário já existe');
-
+      const userAlreadyExists = createUserDto?.email ? await this.findOneByEmail(createUserDto.email) : null;
+      
+      if (userAlreadyExists?.user) throw new Error('Usuário já existe');
+      
       const user = this.userRepository.create(createUserDto);
 
       return {

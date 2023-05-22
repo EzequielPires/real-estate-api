@@ -8,7 +8,6 @@ import { Token } from "src/modules/token/entities/token.entity";
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
-@Unique(['email'])
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -16,10 +15,10 @@ export class User {
     @Column()
     name: string;
 
-    @Column()
+    @Column({nullable: true})
     email: string;
 
-    @Column()
+    @Column({nullable: true})
     password: string;
 
     @Column()
@@ -76,6 +75,8 @@ export class User {
 
     @BeforeInsert()
     hasPassword() {
-        this.password = hashSync(this.password, 10);
+        if(this.password) {
+            this.password = hashSync(this.password, 10);
+        }
     }
 }
