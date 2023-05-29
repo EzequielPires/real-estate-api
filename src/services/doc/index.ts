@@ -50,9 +50,9 @@ export class Doc {
                 profession: rentalContract.profession,
                 propertyAddress: `${property.address.route}, ${property.address.number} - ${property.address.district.name}, ${property.address.city.name} - ${property.address.state.shortName}`,
                 rg: rentalContract.rg,
-                startContract: formatDate(new Date(rentalContract.end)),
+                startContract: formatDate(new Date(rentalContract.start)),
                 type: property.type.name,
-                signatureDate: date.toLocaleDateString(),
+                signatureDate: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
                 guarantor: `${guarantorName ?? 'XXXXXX'}, ${guarantorNationality ?? 'XXXXXX'}, ${guarantorMaritalStatus ?? 'XXXXXX'}, ${guarantorProfession ?? 'XXXXXX'}, RG nº ${guarantorCpf ?? 'XXXXXX'}, CPF ${guarantorRg ?? 'XXXXXX'}, Tel: ${guarantorPhone ?? 'XXXXXX'}`
             };
 
