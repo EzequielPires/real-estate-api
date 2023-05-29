@@ -35,13 +35,13 @@ export class RentalContract {
     @JoinColumn()
     property: Property;
 
-    @ManyToOne(() => User, user => user.rentalContracts, {eager: true, nullable: true})
+    @ManyToOne(() => User, user => user.rentalContracts, {eager: true, nullable: true, onDelete: 'SET NULL'})
     owner: User;
     
     @ManyToOne(() => User, user => user.rentalContractsLocator, {eager: true, nullable: true, onDelete: 'SET NULL'})
     locator: User;
 
-    @ManyToOne(() => User, user => user.rentalContractsTenant, {eager: true, nullable: false})
+    @ManyToOne(() => User, user => user.rentalContractsTenant, {eager: true, nullable: false, onDelete: 'CASCADE'})
     tenant: User;
 
     @OneToMany(() => Invoice, invoice => invoice.rentalContract)
