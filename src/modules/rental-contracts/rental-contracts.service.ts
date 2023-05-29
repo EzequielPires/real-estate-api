@@ -38,7 +38,7 @@ export class RentalContractsService {
         if (tenant && !tenantExists || tenantExists.role != Role.customer) throw new Error('Tenant invalid.');
       }
 
-      const newAddress = await this.addressService.create(address);
+      const newAddress = address ? await this.addressService.create(address) : null;
 
       const contract = this.rentalContractRepository.create({
         ...createRentalContractDto,

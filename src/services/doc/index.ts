@@ -39,7 +39,7 @@ export class Doc {
                 name: rentalContract.tenant.name,
                 nationality: rentalContract.nationality,
                 maritalStatus: rentalContract.maritalStatus,
-                address: `${rentalContract.address.city.name} - ${rentalContract.address.state.shortName}`,
+                address: rentalContract?.address?.city ? `${rentalContract.address.city.name} - ${rentalContract.address.state.shortName}` : 'Catalão - GO',
                 cpf: rentalContract.cpf,
                 duration: `${rentalContract.duration} meses`,
                 endContract: formatDate(new Date(rentalContract.end)),

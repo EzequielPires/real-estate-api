@@ -1,4 +1,5 @@
 import { hashSync } from "bcrypt";
+import { MaritalStatus } from "src/enums/rental.enum";
 import { Role } from "src/enums/role.enum";
 import { Lead } from "src/modules/leads/entities/lead.entity";
 import { Property } from "src/modules/properties/entities/property.entity";
@@ -35,6 +36,24 @@ export class User {
 
     @Column({type: "simple-enum", enum: Role, default: Role.customer})
     role: Role;
+
+    @Column({nullable: true})
+    cpf: string;
+
+    @Column({nullable: true})
+    rg: string;
+    
+    @Column({nullable: true})
+    profession: string;
+    
+    @Column({nullable: true})
+    nationality: string;
+    
+    @Column({nullable: true})
+    duration: number;
+    
+    @Column({type: 'simple-enum', enum: MaritalStatus, default: MaritalStatus.solteiro, nullable: true})
+    maritalStatus: MaritalStatus;
 
     @OneToMany(() => Property, property => property.pickup)
     capturedProperties: Property[];
