@@ -3,6 +3,7 @@ import * as path from 'path';
 import slugify from 'slugify';
 import { formatDate } from 'src/helpers/date';
 import { maskPhone, maskPrice } from 'src/helpers/mask';
+import { fullNumber } from 'src/helpers/numeroExtenso';
 import { RentalContract } from 'src/modules/rental-contracts/entities/rental-contract.entity';
 const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
@@ -22,11 +23,14 @@ export interface ContractData {
     startContract: string;
     endContract: string;
     price: string;
+    pix: string;
     paymentLimit: string;
     signatureDate: string;
     guarantor?: string;
     shorts?: string;
 }
+
+const getValue = (value: string) => value && value != '' ? value : 'XXXXXX';
 
 export class Doc {
     async generateContract(rentalContract: RentalContract) {
@@ -37,23 +41,24 @@ export class Doc {
             date.setHours(date.getHours() + 4);
             const contract: ContractData = {
                 name: rentalContract.tenant.name,
-                nationality: rentalContract.nationality,
-                maritalStatus: rentalContract.maritalStatus,
+                nationality: getValue(rentalContract.nationality),
+                maritalStatus: getValue(rentalContract.maritalStatus),
                 address: rentalContract?.address?.city ? `${rentalContract.address.city.name} - ${rentalContract.address.state.shortName}` : 'Catalão - GO',
-                cpf: rentalContract.cpf,
-                duration: `${rentalContract.duration} meses`,
+                cpf: getValue(rentalContract.cpf),
+                duration: `${fullNumber(rentalContract.duration)} meses`,
                 endContract: formatDate(new Date(rentalContract.end)),
                 paymentLimit: rentalContract.paymentLimit.toString(),
                 phone: maskPhone(rentalContract.tenant.phone),
-                price: maskPrice(rentalContract.price),
+                price: `${maskPrice(rentalContract.price)} (${fullNumber(Number(rentalContract.price.substring(0, rentalContract.price.length - 2)))} reais)`,
+                pix: rentalContract.pix ?? 'Celular: (64) 98168-0018',
                 shorts: maskPrice(rentalContract.shorts),
-                profession: rentalContract.profession,
+                profession: getValue(rentalContract.profession),
                 propertyAddress: `${property.address.route}, ${property.address.number} - ${property.address.district.name}, ${property.address.city.name} - ${property.address.state.shortName}`,
-                rg: rentalContract.rg,
+                rg: getValue(rentalContract.rg),
                 startContract: formatDate(new Date(rentalContract.start)),
                 type: property.type.name,
                 signatureDate: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
-                guarantor: `${guarantorName ?? 'XXXXXX'}, ${guarantorNationality ?? 'XXXXXX'}, ${guarantorMaritalStatus ?? 'XXXXXX'}, ${guarantorProfession ?? 'XXXXXX'}, RG nº ${guarantorCpf ?? 'XXXXXX'}, CPF ${guarantorRg ?? 'XXXXXX'}, Tel: ${guarantorPhone ?? 'XXXXXX'}`
+                guarantor: `${getValue(guarantorName)}, ${getValue(guarantorNationality)}, ${getValue(guarantorMaritalStatus)}, ${getValue(guarantorProfession)}, RG nº ${getValue(guarantorCpf)}, CPF ${getValue(guarantorRg)}, Tel: ${getValue(guarantorPhone)}`
             };
 
 

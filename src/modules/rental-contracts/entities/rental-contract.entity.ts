@@ -12,6 +12,9 @@ export class RentalContract {
 
     @Column({type: 'decimal'})
     price: string;
+
+    @Column({nullable: true})
+    pix: string;
     
     @Column({type: 'decimal', nullable: true})
     shorts: string;
@@ -108,6 +111,6 @@ export class RentalContract {
     @Column({nullable: true})
     guarantorPhone: string;
 
-    @Column({type: 'simple-enum', enum: MaritalStatus, default: MaritalStatus.solteiro})
+    @Column({type: 'simple-enum', enum: MaritalStatus, nullable: true})
     guarantorMaritalStatus: MaritalStatus;
 }

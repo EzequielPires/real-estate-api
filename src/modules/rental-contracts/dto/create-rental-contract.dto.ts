@@ -6,6 +6,7 @@ import { User } from "src/modules/users/entities/user.entity";
 export class CreateRentalContractDto {
     id: number;
     price: string;
+    pix: string;
     start: Date;
     shorts: string;
     signatureDate?: Date;
