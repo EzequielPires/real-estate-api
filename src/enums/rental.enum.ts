@@ -3,4 +3,7 @@ export enum MaritalStatus {
     casado = 'casado',
     viuvo = 'viuvo',
     divorciado = 'divorciado',
+    uniao_estavel = 'uniao-estavel',
+    amasiado = 'amasiado'
 }
+

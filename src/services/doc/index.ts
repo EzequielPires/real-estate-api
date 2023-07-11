@@ -53,7 +53,7 @@ export class Doc {
                 pix: rentalContract.pix ?? 'Celular: (64) 98168-0018',
                 shorts: maskPrice(rentalContract.shorts),
                 profession: getValue(rentalContract.profession),
-                propertyAddress: `${property.address.route}, ${property.address.number} - ${property.address.district.name}, ${property.address.city.name} - ${property.address.state.shortName}`,
+                propertyAddress: `${property.address.route}, ${property.address.number} - ${property.address.district.name}, ${property.address.city.name} - ${property.address.state.shortName}${property.address.complement && `, ${property.address.complement}`}`,
                 rg: getValue(rentalContract.rg),
                 startContract: formatDate(new Date(rentalContract.start)),
                 type: property.type.name,
