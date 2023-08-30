@@ -84,7 +84,8 @@ export class PropertiesService {
 
       { adType && query.andWhere('property.adType = :adType', { adType }) }
       { code && query.andWhere('property.code = :code', { code }) }
-      { emphasis && query.andWhere('property.emphasis = :emphasis', { emphasis }) }
+      console.log(emphasis);
+      { emphasis === 'true' && query.andWhere('property.emphasis = 1', { emphasis }) }
       { status && query.andWhere('property.status = :status', { status }) }
       { typeId && query.andWhere('type.id = :typeId', { typeId }) }
       { stateId && query.andWhere('state.id = :stateId', { stateId }) }
