@@ -154,18 +154,19 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const {password} = updateUserDto;
+    const {password, ...data} = updateUserDto;
     try {
       const user = await this.userRepository.findOneBy({ id });
 
       if (!user) throw new Error('Usuário não encontrado.');
 
+      
       if(password) {
         const newPassword = hashSync(password, 10);
         await this.userRepository.update(id, {...updateUserDto, password: newPassword});
       }
 
-      await this.userRepository.update(id, updateUserDto);
+      await this.userRepository.update(id, data);
 
       return {
         success: true,
