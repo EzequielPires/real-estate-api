@@ -33,9 +33,11 @@ export class PropertiesService {
         if (owner && !ownerExists || ownerExists.role != Role.owner) throw new Error('Owner invalid.');
       }
 
+      console.log('pickup -> ' + pickup);
+
       if (pickup && pickup.id) {
         const pickupExists = await this.userService.findOne(pickup.id).then(res => res.user);
-        if (pickup && !pickupExists || pickupExists.role != Role.realtor) throw new Error('Pickup invalid.');
+        if (pickup && !pickupExists || (pickupExists.role != Role.realtor && pickupExists.role != Role.collaborator)) throw new Error('Pickup invalid.');
       }
 
       const newAddress = await this.addressService.create(address);
@@ -80,11 +82,10 @@ export class PropertiesService {
         .leftJoinAndSelect('property.type', 'type')
         .skip(page ? (limit ?? 15) * (page - 1) : 0)
         .take(limit ?? 15)
-        .orderBy("property.createdAt", 'DESC');
+        .orderBy("property.updatedAt", 'DESC');
 
       { adType && query.andWhere('property.adType = :adType', { adType }) }
       { code && query.andWhere('property.code = :code', { code }) }
-      console.log(emphasis);
       { emphasis === 'true' && query.andWhere('property.emphasis = 1', { emphasis }) }
       { status && query.andWhere('property.status = :status', { status }) }
       { typeId && query.andWhere('type.id = :typeId', { typeId }) }
