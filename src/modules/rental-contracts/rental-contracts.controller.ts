@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { RentalContractsService } from './rental-contracts.service';
 import { CreateRentalContractDto } from './dto/create-rental-contract.dto';
 import { UpdateRentalContractDto } from './dto/update-rental-contract.dto';
@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName } from 'src/helpers/string';
 import { compressImage } from 'src/helpers/compress';
+import { FindRentalContractDto } from './dto/find-rental-contract.dto';
 
 @UseGuards(JwtAuthGuard, UserAdminGuard)
 @Controller('rental-contracts')
@@ -20,8 +21,8 @@ export class RentalContractsController {
   }
 
   @Get()
-  findAll() {
-    return this.rentalContractsService.findAll();
+  findAll(@Query() query: FindRentalContractDto) {
+    return this.rentalContractsService.findAll(query);
   }
 
   @Get(':id')

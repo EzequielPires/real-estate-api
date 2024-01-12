@@ -10,6 +10,7 @@ import { PropertiesService } from '../properties/properties.service';
 import { Status } from 'src/enums/property.enum';
 import { AddressService } from '../address/address.service';
 import { Doc } from 'src/services/doc';
+import { FindRentalContractDto } from './dto/find-rental-contract.dto';
 
 @Injectable()
 export class RentalContractsService {
@@ -61,15 +62,30 @@ export class RentalContractsService {
     }
   }
 
-  async findAll() {
+  async findAll(queryDto?: FindRentalContractDto) {
     try {
+      const { limit, page, code } = queryDto;
+      const query = this.rentalContractRepository.createQueryBuilder('r')
+        .leftJoinAndSelect('r.property', 'property')
+        .leftJoinAndSelect('property.address', 'address')
+        .leftJoinAndSelect('property.type', 'type')
+        .leftJoinAndSelect('address.district', 'district')
+        .leftJoinAndSelect('address.city', 'city')
+        .leftJoinAndSelect('address.state', 'state')
+        .skip(page ? (limit ?? 15) * (page - 1) : 0)
+        .take(limit ?? 15)
+        .orderBy("r.end", 'DESC');
+
+        {code && query.andWhere('property.code = :code', {code})}
+
+      const [results, total] = await query.getManyAndCount();
+
       return {
         success: true,
-        results: await this.rentalContractRepository.find({
-          order: {
-            end: 'DESC'
-          }
-        })
+        results,
+        total,
+        page: queryDto.page ? Number(queryDto.page) : 1,
+        limit: queryDto.limit ? Number(queryDto.limit) : 15,
       }
     } catch (error) {
       return {
@@ -182,7 +198,7 @@ export class RentalContractsService {
       const contract = await this.rentalContractRepository.findOne({ where: { id } });
 
       if (!contract) throw new Error('Contrato de locação não encontrada.');
-      if(!contract.images) contract.images = [];
+      if (!contract.images) contract.images = [];
 
       contract.images.push(path);
 
