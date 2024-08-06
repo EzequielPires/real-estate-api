@@ -58,7 +58,7 @@ export class Doc {
                 startContract: formatDate(new Date(rentalContract.start)),
                 type: property.type.name,
                 signatureDate: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
-                guarantor: `${getValue(guarantorName)}, ${getValue(guarantorNationality)}, ${getValue(guarantorMaritalStatus)}, ${getValue(guarantorProfession)}, RG nº ${getValue(guarantorCpf)}, CPF ${getValue(guarantorRg)}, Tel: ${getValue(guarantorPhone)}`
+                guarantor: `${getValue(guarantorName)}, ${getValue(guarantorNationality)}, ${getValue(guarantorMaritalStatus)}, ${getValue(guarantorProfession)}, RG nº ${getValue(guarantorRg)}, CPF ${getValue(guarantorCpf)}, Tel: ${getValue(guarantorPhone)}`
             };
 
 
