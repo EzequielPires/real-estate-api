@@ -2,8 +2,6 @@ import { readFile, unlink } from 'fs';
 import { promisify } from 'util';
 import * as sharp from 'sharp';
 import { FirebaseService } from 'src/services/firebase/firebase.service';
-//import { FirebaseService } from 'src/services/firebase/firebase.service';
-//import { S3Service } from 'src/services/s3.service';
 
 const readFileAsyc = promisify(readFile);
 
